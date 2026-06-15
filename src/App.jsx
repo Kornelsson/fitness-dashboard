@@ -639,7 +639,7 @@ Ak nejaký údaj chýba, daj null. Iba JSON, žiadny text navyše.` }
                     ].map(([l,v,col,src]) => (
                       <div key={l} style={{ background:C.card2, borderRadius:10, padding:"12px 14px", borderTop:`2px solid ${col}` }}>
                         <div style={{ fontSize:10, color:C.muted, textTransform:"uppercase", letterSpacing:1, marginBottom:2 }}>{l}</div>
-                        <div style={{ fontSize:20, fontWeight:800, color, lineHeight:1.1 }}>{v}</div>
+                        <div style={{ fontSize:20, fontWeight:800, color:col, lineHeight:1.1 }}>{v}</div>
                         <div style={{ fontSize:10, color:C.muted, marginTop:3 }}>📱 {src}</div>
                       </div>
                     ))}
