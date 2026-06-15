@@ -230,15 +230,24 @@ Ak nejaký údaj chýba, daj null. Iba JSON, žiadny text navyše.` }
     setZeppLoading(false);
   }, [generateAiInsights]);
 
+  const [healthData, setHealthData] = useState(null);
+  const [healthLoading, setHealthLoading] = useState(true);
+
+  const fetchHealthData = useCallback(async () => {
+    setHealthLoading(true);
+    try {
+      const res = await fetch("https://fitness-dashboard-one-xi.vercel.app/api/health");
+      const data = await res.json();
+      if (data && Object.keys(data).length > 0) {
+        setHealthData(data);
+        setZeppData(prev => ({ ...prev, ...data }));
+      }
+    } catch(e) { console.error(e); }
+    setHealthLoading(false);
+  }, []);
+
   useEffect(() => {
-    fetch("https://fitness-dashboard-one-xi.vercel.app/api/health")
-      .then(r => r.json())
-      .then(data => {
-        if (data && Object.keys(data).length > 0) {
-          setZeppData(prev => ({ ...prev, ...data }));
-        }
-      })
-      .catch(console.error);
+    fetchHealthData();
     generateAiInsights();
   }, []);
 
@@ -609,7 +618,39 @@ Ak nejaký údaj chýba, daj null. Iba JSON, žiadny text navyše.` }
         {tab === "body" && (
           <>
             <Card style={{ marginBottom:16 }}>
-              <SectionTitle icon="⚖️" title="Zepp Life / Smart váha — nahratie dát" />
+              <SectionTitle icon="⚖️" title="Apple Health & Zepp Life dáta" />
+              {healthLoading ? (
+                <div style={{ textAlign:"center", padding:20, color:C.muted }}>⏳ Načítavam dáta z Apple Health...</div>
+              ) : healthData ? (
+                <div style={{ marginBottom:16 }}>
+                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12 }}>
+                    <Tag label="🍎 Live Apple Health dáta" color={C.green} />
+                    <button onClick={fetchHealthData} style={{ background:C.orange, color:"#fff", border:"none", borderRadius:8, padding:"6px 14px", fontWeight:700, fontSize:11, cursor:"pointer" }}>
+                      🔄 Aktualizovať
+                    </button>
+                  </div>
+                  <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(140px,1fr))", gap:10, marginBottom:12 }}>
+                    {[
+                      ["VO2 Max", healthData.vo2max ? `${healthData.vo2max} ml/kg/min` : "—", C.orange, "Apple Watch"],
+                      ["Hmotnosť", healthData.weight ? `${healthData.weight} kg` : "—", C.blue, "Apple Health"],
+                      ["HRV", healthData.hrv ? `${healthData.hrv} ms` : "—", C.green, "Apple Watch"],
+                      ["Pokojová SF", healthData.restingHR ? `${healthData.restingHR} bpm` : "—", C.red, "Apple Watch"],
+                      ["Kroky dnes", healthData.steps ? healthData.steps : "—", C.purple, "iPhone"],
+                    ].map(([l,v,col,src]) => (
+                      <div key={l} style={{ background:C.card2, borderRadius:10, padding:"12px 14px", borderTop:`2px solid ${col}` }}>
+                        <div style={{ fontSize:10, color:C.muted, textTransform:"uppercase", letterSpacing:1, marginBottom:2 }}>{l}</div>
+                        <div style={{ fontSize:20, fontWeight:800, color, lineHeight:1.1 }}>{v}</div>
+                        <div style={{ fontSize:10, color:C.muted, marginTop:3 }}>📱 {src}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ background:`${C.green}18`, borderRadius:8, padding:"10px 14px", fontSize:11, color:C.muted }}>
+                    💡 Spusti Shortcut <strong style={{color:C.light}}>"Sync Health Dashboard"</strong> na iPhone pre aktualizáciu dát.
+                  </div>
+                </div>
+              ) : null}
+              <div style={{ borderTop:`1px solid ${C.border}`, paddingTop:16, marginTop:8 }}>
+              <SectionTitle icon="⚖️" title="Zepp Life — telesné zloženie" />
               {!zeppData ? (
                 <div style={{ textAlign:"center", padding:"32px 20px" }}>
                   <div style={{ fontSize:40, marginBottom:12 }}>📱</div>
@@ -665,6 +706,7 @@ Ak nejaký údaj chýba, daj null. Iba JSON, žiadny text navyše.` }
               )}
             </Card>
 
+            </div>
             {!zeppData && (
               <Card>
                 <SectionTitle icon="📊" title="Odporúčané hodnoty pre aktívneho bežca 75 kg" />
