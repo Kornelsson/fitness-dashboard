@@ -233,15 +233,22 @@ Ak nejaký údaj chýba, daj null. Iba JSON, žiadny text navyše.` }
   const [healthData, setHealthData] = useState(null);
   const [healthLoading, setHealthLoading] = useState(true);
 
+  const [historyData, setHistoryData] = useState([]);
+
   const fetchHealthData = useCallback(async () => {
     setHealthLoading(true);
     try {
-      const res = await fetch("https://fitness-dashboard-one-xi.vercel.app/api/health");
+      const [res, histRes] = await Promise.all([
+        fetch("https://fitness-dashboard-one-xi.vercel.app/api/health"),
+        fetch("https://fitness-dashboard-one-xi.vercel.app/api/health?type=history"),
+      ]);
       const data = await res.json();
+      const hist = await histRes.json();
       if (data && Object.keys(data).length > 0) {
         setHealthData(data);
         setZeppData(prev => ({ ...prev, ...data }));
       }
+      if (Array.isArray(hist)) setHistoryData(hist.reverse());
     } catch(e) { console.error(e); }
     setHealthLoading(false);
   }, []);
@@ -258,6 +265,7 @@ Ak nejaký údaj chýba, daj null. Iba JSON, žiadny text navyše.` }
     { id:"nutrition", label:"🥗 Výživa" },
     { id:"body",      label:"⚖️ Telo" },
     { id:"ai",        label:"🤖 AI Tipy" },
+    { id:"history",   label:"📈 História" },
   ];
 
   const activityIcon = t => ({ Run:"🏃", Ride:"🚴", Walk:"🚶", Hike:"🥾" }[t] || "⚡");
@@ -797,6 +805,136 @@ Ak nejaký údaj chýba, daj null. Iba JSON, žiadny text navyše.` }
           </>
         )}
       </div>
+
+        {/* ══════════════════════════════════════
+            TAB: HISTÓRIA
+        ══════════════════════════════════════ */}
+        {tab === "history" && (
+          <>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}>
+              <div>
+                <div style={{ fontSize:14, fontWeight:700 }}>Históra zdravotných metrík</div>
+                <div style={{ fontSize:11, color:C.muted }}>Denné záznamy z Apple Health · {historyData.length} dní</div>
+              </div>
+              <button onClick={fetchHealthData}
+                style={{ background:C.orange, color:"#fff", border:"none", borderRadius:8, padding:"8px 16px", fontWeight:700, fontSize:12, cursor:"pointer" }}>
+                🔄 Aktualizovať
+              </button>
+            </div>
+
+            {historyData.length === 0 ? (
+              <Card style={{ textAlign:"center", padding:40 }}>
+                <div style={{ fontSize:32, marginBottom:12 }}>📊</div>
+                <div style={{ color:C.muted }}>Žiadne historické dáta. Spusti Shortcut každý deň pre zber dát.</div>
+              </Card>
+            ) : (
+              <>
+                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:16, marginBottom:16 }}>
+                  <Card>
+                    <SectionTitle icon="❤️" title="HRV trend (ms)" />
+                    <ResponsiveContainer width="100%" height={180}>
+                      <AreaChart data={historyData}>
+                        <defs>
+                          <linearGradient id="hrv_gr" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor={C.green} stopOpacity={0.3} />
+                            <stop offset="95%" stopColor={C.green} stopOpacity={0} />
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" stroke={C.border} />
+                        <XAxis dataKey="date" tick={{ fill:C.muted, fontSize:9 }} tickFormatter={d => d.slice(5)} />
+                        <YAxis tick={{ fill:C.muted, fontSize:10 }} />
+                        <Tooltip content={<CustomTooltip />} />
+                        <ReferenceLine y={40} stroke={C.yellow} strokeDasharray="4 4" label={{ value:"Optimum", fill:C.yellow, fontSize:9 }} />
+                        <Area type="monotone" dataKey="hrv" stroke={C.green} strokeWidth={2} fill="url(#hrv_gr)" name="HRV (ms)" />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </Card>
+
+                  <Card>
+                    <SectionTitle icon="⚖️" title="Hmotnosť trend (kg)" />
+                    <ResponsiveContainer width="100%" height={180}>
+                      <AreaChart data={historyData}>
+                        <defs>
+                          <linearGradient id="weight_gr" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor={C.blue} stopOpacity={0.3} />
+                            <stop offset="95%" stopColor={C.blue} stopOpacity={0} />
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" stroke={C.border} />
+                        <XAxis dataKey="date" tick={{ fill:C.muted, fontSize:9 }} tickFormatter={d => d.slice(5)} />
+                        <YAxis tick={{ fill:C.muted, fontSize:10 }} domain={['dataMin - 1', 'dataMax + 1']} />
+                        <Tooltip content={<CustomTooltip />} />
+                        <Area type="monotone" dataKey="weight" stroke={C.blue} strokeWidth={2} fill="url(#weight_gr)" name="Hmotnosť (kg)" />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </Card>
+
+                  <Card>
+                    <SectionTitle icon="🫁" title="VO2 Max trend" />
+                    <ResponsiveContainer width="100%" height={180}>
+                      <AreaChart data={historyData}>
+                        <defs>
+                          <linearGradient id="vo2_gr" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor={C.orange} stopOpacity={0.3} />
+                            <stop offset="95%" stopColor={C.orange} stopOpacity={0} />
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" stroke={C.border} />
+                        <XAxis dataKey="date" tick={{ fill:C.muted, fontSize:9 }} tickFormatter={d => d.slice(5)} />
+                        <YAxis tick={{ fill:C.muted, fontSize:10 }} domain={['dataMin - 2', 'dataMax + 2']} />
+                        <Tooltip content={<CustomTooltip />} />
+                        <ReferenceLine y={47} stroke={C.orange} strokeDasharray="4 4" label={{ value:"Aktuálne", fill:C.orange, fontSize:9 }} />
+                        <Area type="monotone" dataKey="vo2max" stroke={C.orange} strokeWidth={2} fill="url(#vo2_gr)" name="VO2 Max" />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </Card>
+
+                  <Card>
+                    <SectionTitle icon="👣" title="Kroky trend" />
+                    <ResponsiveContainer width="100%" height={180}>
+                      <BarChart data={historyData}>
+                        <CartesianGrid strokeDasharray="3 3" stroke={C.border} />
+                        <XAxis dataKey="date" tick={{ fill:C.muted, fontSize:9 }} tickFormatter={d => d.slice(5)} />
+                        <YAxis tick={{ fill:C.muted, fontSize:10 }} />
+                        <Tooltip content={<CustomTooltip />} />
+                        <Bar dataKey="steps" fill={C.purple} radius={[3,3,0,0]} name="Kroky" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </Card>
+                </div>
+
+                {/* History table */}
+                <Card>
+                  <SectionTitle icon="📋" title="Denné záznamy" />
+                  <div style={{ overflowX:"auto" }}>
+                    <table style={{ width:"100%", borderCollapse:"collapse", fontSize:11 }}>
+                      <thead>
+                        <tr style={{ background:C.card2, color:C.muted, fontSize:10, textTransform:"uppercase" }}>
+                          {["Dátum","VO2 Max","Hmotnosť","HRV","Pokojová SF","Kroky","Spánok"].map(h => (
+                            <th key={h} style={{ padding:"8px 10px", textAlign:"left", fontWeight:600 }}>{h}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {[...historyData].reverse().map((d,i) => (
+                          <tr key={i} style={{ borderTop:`1px solid ${C.border}`, background: i%2 ? C.card2 : "transparent" }}>
+                            <td style={{ padding:"7px 10px", color:C.orange, fontWeight:600 }}>{d.date}</td>
+                            <td style={{ padding:"7px 10px", color:C.orange }}>{d.vo2max || "—"}</td>
+                            <td style={{ padding:"7px 10px" }}>{d.weight ? `${d.weight} kg` : "—"}</td>
+                            <td style={{ padding:"7px 10px", color: d.hrv > 40 ? C.green : d.hrv > 25 ? C.yellow : C.red }}>{d.hrv ? `${d.hrv} ms` : "—"}</td>
+                            <td style={{ padding:"7px 10px", color:C.red }}>{d.restingHR || "—"}</td>
+                            <td style={{ padding:"7px 10px", color:C.purple }}>{d.steps || "—"}</td>
+                            <td style={{ padding:"7px 10px", color:C.teal }}>{d.sleep || "—"}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </Card>
+              </>
+            )}
+          </>
+        )}
 
       {/* ── FOOTER ── */}
       <div style={{ borderTop:`1px solid ${C.border}`, padding:"12px 20px", marginTop:24 }}>
