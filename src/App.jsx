@@ -239,8 +239,8 @@ Ak nejaký údaj chýba, daj null. Iba JSON, žiadny text navyše.` }
     setHealthLoading(true);
     try {
       const [res, histRes] = await Promise.all([
-        fetch("https://kornel-fitness.vercel.app/api/health"),
-        fetch("https://kornel-fitness.vercel.app/api/health?type=history"),
+        fetch("https://fitness-dashboard-one-xi.vercel.app/api/health"),
+        fetch("https://fitness-dashboard-one-xi.vercel.app/api/health?type=history"),
       ]);
       const data = await res.json();
       const hist = await histRes.json();
@@ -642,8 +642,7 @@ Ak nejaký údaj chýba, daj null. Iba JSON, žiadny text navyše.` }
                       ["VO2 Max", healthData.vo2max ? `${healthData.vo2max} ml/kg/min` : "—", C.orange, "Apple Watch"],
                       ["Hmotnosť", healthData.weight ? `${healthData.weight} kg` : "—", C.blue, "Apple Health"],
                       ["HRV", healthData.hrv ? `${healthData.hrv} ms` : "—", C.green, "Apple Watch"],
-                      ["Pokojová SF", healthData.restingHR ? `${healthData.restingHR} bpm` : "—", C.red, "Apple Watch"],
-                      ["Kroky dnes", healthData.steps ? healthData.steps : "—", C.purple, "iPhone"],
+                      ["Spánok", healthData.sleep || "—", C.purple, "Apple Watch"],
                     ].map(([l,v,col,src]) => (
                       <div key={l} style={{ background:C.card2, borderRadius:10, padding:"12px 14px", borderTop:`2px solid ${col}` }}>
                         <div style={{ fontSize:10, color:C.muted, textTransform:"uppercase", letterSpacing:1, marginBottom:2 }}>{l}</div>
@@ -683,16 +682,12 @@ Ak nejaký údaj chýba, daj null. Iba JSON, žiadny text navyše.` }
                   <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(120px,1fr))", gap:10, marginBottom:16 }}>
                     {[
                       ["Body Score", zeppData.bodyScore ? `${zeppData.bodyScore} / 100` : "—", C.orange, null],
-                      ["Hmotnosť", zeppData.weight ? `${zeppData.weight} kg` : "—", C.light, null],
                       ["Tukové tkanivo", zeppData.fat ? `${zeppData.fat} %` : "—", zeppData.fat > 20 ? C.yellow : C.green, zeppData.fat > 20 ? "⚠️ Trochu vysoké pre bežca" : "✅ V norme"],
                       ["Svalová hmota", zeppData.muscle ? `${zeppData.muscle} kg` : "—", C.blue, "✅ Normal"],
-                      ["Telesná voda", zeppData.water ? `${zeppData.water} %` : "—", zeppData.water < 55 ? C.red : C.teal, "⚠️ Insufficient — pi viac!"],
+                      ["Telesná voda", zeppData.water ? `${zeppData.water} %` : "—", zeppData.water < 55 ? C.red : C.teal, "⚠️ Pi viac!"],
                       ["BMI", zeppData.bmi ? zeppData.bmi : "—", C.green, "✅ Normal"],
-                      ["Viscerálny tuk", zeppData.visceral ? zeppData.visceral : "—", zeppData.visceral >= 10 ? C.red : C.green, "⚠️ Increased — cieľ < 10"],
-                      ["Kostná hmota", zeppData.bone ? `${zeppData.bone} kg` : "—", C.yellow, "⚠️ Insufficient"],
-                      ["Proteín", zeppData.protein ? `${zeppData.protein} %` : "—", C.green, "✅ Great"],
-                      ["Bazálny metabolizmus", zeppData.bmr ? `${zeppData.bmr} kcal` : "—", C.purple, "⚠️ Pod cieľom"],
-                      ["Typ postavy", zeppData.bodyType || "—", C.teal, "✅ Balanced"],
+                      ["Viscerálny tuk", zeppData.visceral ? zeppData.visceral : "—", zeppData.visceral >= 10 ? C.red : C.green, "⚠️ Cieľ < 10"],
+                      ["Proteín %", zeppData.protein ? `${zeppData.protein} %` : "—", C.green, "✅ Great"],
                     ].map(([l,v,col,sub]) => (
                       <KPI key={l} label={l} value={v} sub={sub} color={col} />
                     ))}
@@ -910,7 +905,7 @@ Ak nejaký údaj chýba, daj null. Iba JSON, žiadny text navyše.` }
                     <table style={{ width:"100%", borderCollapse:"collapse", fontSize:11 }}>
                       <thead>
                         <tr style={{ background:C.card2, color:C.muted, fontSize:10, textTransform:"uppercase" }}>
-                          {["Dátum","VO2 Max","Hmotnosť","HRV","Pokojová SF","Kroky","Spánok"].map(h => (
+                          {["Dátum","VO2 Max","Hmotnosť","HRV","Spánok"].map(h => (
                             <th key={h} style={{ padding:"8px 10px", textAlign:"left", fontWeight:600 }}>{h}</th>
                           ))}
                         </tr>
@@ -922,8 +917,6 @@ Ak nejaký údaj chýba, daj null. Iba JSON, žiadny text navyše.` }
                             <td style={{ padding:"7px 10px", color:C.orange }}>{d.vo2max || "—"}</td>
                             <td style={{ padding:"7px 10px" }}>{d.weight ? `${d.weight} kg` : "—"}</td>
                             <td style={{ padding:"7px 10px", color: d.hrv > 40 ? C.green : d.hrv > 25 ? C.yellow : C.red }}>{d.hrv ? `${d.hrv} ms` : "—"}</td>
-                            <td style={{ padding:"7px 10px", color:C.red }}>{d.restingHR || "—"}</td>
-                            <td style={{ padding:"7px 10px", color:C.purple }}>{d.steps || "—"}</td>
                             <td style={{ padding:"7px 10px", color:C.teal }}>{d.sleep || "—"}</td>
                           </tr>
                         ))}
