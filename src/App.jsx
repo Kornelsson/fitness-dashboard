@@ -230,7 +230,17 @@ Ak nejaký údaj chýba, daj null. Iba JSON, žiadny text navyše.` }
     setZeppLoading(false);
   }, [generateAiInsights]);
 
-  useEffect(() => { generateAiInsights(); }, []);
+  useEffect(() => {
+    fetch("https://fitness-dashboard-one-xi.vercel.app/api/health")
+      .then(r => r.json())
+      .then(data => {
+        if (data && Object.keys(data).length > 0) {
+          setZeppData(prev => ({ ...prev, ...data }));
+        }
+      })
+      .catch(console.error);
+    generateAiInsights();
+  }, []);
 
   const tabs = [
     { id:"overview",  label:"📊 Prehľad" },
