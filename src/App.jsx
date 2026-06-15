@@ -704,9 +704,9 @@ Ak nejaký údaj chýba, daj null. Iba JSON, žiadny text navyše.` }
                   </div>
                 </div>
               )}
+            </div>
             </Card>
 
-            </div>
             {!zeppData && (
               <Card>
                 <SectionTitle icon="📊" title="Odporúčané hodnoty pre aktívneho bežca 75 kg" />
