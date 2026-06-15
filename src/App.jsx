@@ -239,8 +239,8 @@ Ak nejaký údaj chýba, daj null. Iba JSON, žiadny text navyše.` }
     setHealthLoading(true);
     try {
       const [res, histRes] = await Promise.all([
-        fetch("https://fitness-dashboard-one-xi.vercel.app/api/health"),
-        fetch("https://fitness-dashboard-one-xi.vercel.app/api/health?type=history"),
+        fetch("https://kornel-fitness.vercel.app/api/health"),
+        fetch("https://kornel-fitness.vercel.app/api/health?type=history"),
       ]);
       const data = await res.json();
       const hist = await histRes.json();
