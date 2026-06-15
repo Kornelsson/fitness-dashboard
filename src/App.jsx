@@ -642,7 +642,7 @@ Ak nejaký údaj chýba, daj null. Iba JSON, žiadny text navyše.` }
                       ["VO2 Max", healthData.vo2max ? `${healthData.vo2max} ml/kg/min` : "—", C.orange, "Apple Watch"],
                       ["Hmotnosť", healthData.weight ? `${healthData.weight} kg` : "—", C.blue, "Apple Health"],
                       ["HRV", healthData.hrv ? `${healthData.hrv} ms` : "—", C.green, "Apple Watch"],
-                      ["Spánok", healthData.sleep || "—", C.purple, "Apple Watch"],
+                      
                     ].map(([l,v,col,src]) => (
                       <div key={l} style={{ background:C.card2, borderRadius:10, padding:"12px 14px", borderTop:`2px solid ${col}` }}>
                         <div style={{ fontSize:10, color:C.muted, textTransform:"uppercase", letterSpacing:1, marginBottom:2 }}>{l}</div>
