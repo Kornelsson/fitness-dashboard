@@ -272,41 +272,38 @@ Ak nejaký údaj chýba, daj null. Iba JSON, žiadny text navyše.` }
   const activityColor = t => ({ Run:C.orange, Ride:C.blue, Walk:C.purple, Hike:C.green }[t] || C.muted);
 
   return (
-    <div style={{ background:C.dark, minHeight:"100vh", color:C.light, fontFamily:"'Inter','Segoe UI',system-ui,sans-serif", fontSize:13 }}>
+    <div style={{ background:C.dark, minHeight:"100vh", color:C.light, fontFamily:"'Inter','Segoe UI',system-ui,sans-serif", fontSize:13, overflowX:"hidden", maxWidth:"100vw" }}>
 
       {/* ── HEADER ── */}
-      <div style={{ background:C.card, borderBottom:`1px solid ${C.border}`, padding:"0 20px", position:"sticky", top:0, zIndex:50 }}>
-        <div style={{ maxWidth:1200, margin:"0 auto", display:"flex", alignItems:"center", justifyContent:"space-between", height:52 }}>
-          <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-            <div style={{ background:C.orange, borderRadius:8, width:32, height:32, display:"flex", alignItems:"center", justifyContent:"center", fontWeight:900, fontSize:14 }}>S</div>
-            <div>
-              <div style={{ fontWeight:800, fontSize:14, lineHeight:1 }}>KORNEL MICHALIC</div>
-              <div style={{ fontSize:10, color:C.muted, marginTop:2 }}>42 rokov · 75 kg · Košice</div>
+      <div style={{ background:C.card, borderBottom:`1px solid ${C.border}`, padding:"0 12px", position:"sticky", top:0, zIndex:50 }}>
+        <div style={{ maxWidth:1200, margin:"0 auto", display:"flex", alignItems:"center", justifyContent:"space-between", height:48, gap:8 }}>
+          <div style={{ display:"flex", alignItems:"center", gap:8, minWidth:0 }}>
+            <div style={{ background:C.orange, borderRadius:8, width:30, height:30, display:"flex", alignItems:"center", justifyContent:"center", fontWeight:900, fontSize:13, flexShrink:0 }}>S</div>
+            <div style={{ minWidth:0 }}>
+              <div style={{ fontWeight:800, fontSize:13, lineHeight:1, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>KORNEL MICHALIC</div>
+              <div style={{ fontSize:9, color:C.muted, marginTop:1 }}>42r · 75kg · Košice</div>
             </div>
           </div>
-          <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-            <span style={{ fontSize:10, color:C.muted }}>Sync: {lastSync}</span>
-            <button onClick={syncStrava} disabled={loading}
-              style={{ background:loading?C.card2:C.orange, color:"#fff", border:"none", borderRadius:8, padding:"7px 14px", fontWeight:700, fontSize:12, cursor:"pointer", display:"flex", alignItems:"center", gap:6, transition:"all .2s" }}>
-              {loading ? <><span style={{ animation:"spin 1s linear infinite", display:"inline-block" }}>⟳</span> Synchronizujem…</> : "⟳ Aktualizovať Strava"}
-            </button>
-          </div>
+          <button onClick={syncStrava} disabled={loading}
+            style={{ background:loading?C.card2:C.orange, color:"#fff", border:"none", borderRadius:8, padding:"6px 10px", fontWeight:700, fontSize:11, cursor:"pointer", display:"flex", alignItems:"center", gap:4, flexShrink:0, whiteSpace:"nowrap" }}>
+            {loading ? <>⟳ Sync…</> : "⟳ Strava"}
+          </button>
         </div>
       </div>
 
       {/* ── TABS ── */}
-      <div style={{ background:C.card, borderBottom:`1px solid ${C.border}`, padding:"0 20px" }}>
-        <div style={{ maxWidth:1200, margin:"0 auto", display:"flex", gap:0 }}>
+      <div style={{ background:C.card, borderBottom:`1px solid ${C.border}`, overflowX:"auto", WebkitOverflowScrolling:"touch", msOverflowStyle:"none", scrollbarWidth:"none" }}>
+        <div style={{ display:"flex", gap:0, minWidth:"max-content", padding:"0 8px" }}>
           {tabs.map(t => (
             <button key={t.id} onClick={() => setTab(t.id)}
-              style={{ background:"none", border:"none", borderBottom:`2px solid ${tab===t.id ? C.orange:"transparent"}`, color:tab===t.id ? C.orange : C.muted, padding:"12px 16px", cursor:"pointer", fontWeight:tab===t.id?700:400, fontSize:12, transition:"all .15s", whiteSpace:"nowrap" }}>
+              style={{ background:"none", border:"none", borderBottom:`2px solid ${tab===t.id ? C.orange:"transparent"}`, color:tab===t.id ? C.orange : C.muted, padding:"10px 12px", cursor:"pointer", fontWeight:tab===t.id?700:400, fontSize:11, transition:"all .15s", whiteSpace:"nowrap" }}>
               {t.label}
             </button>
           ))}
         </div>
       </div>
 
-      <div style={{ maxWidth:1200, margin:"0 auto", padding:"20px" }}>
+      <div style={{ maxWidth:1200, margin:"0 auto", padding:"12px" }}>
 
         {/* ══════════════════════════════════════
             TAB: PREHĽAD
@@ -314,7 +311,7 @@ Ak nejaký údaj chýba, daj null. Iba JSON, žiadny text navyše.` }
         {tab === "overview" && (
           <>
             {/* Hero bar */}
-            <div style={{ background:`linear-gradient(135deg, ${C.card} 0%, #1a1218 100%)`, borderRadius:16, padding:"20px 24px", marginBottom:20, border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:16 }}>
+            <div style={{ background:`linear-gradient(135deg, ${C.card} 0%, #1a1218 100%)`, borderRadius:12, padding:"14px 16px", marginBottom:14, border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:12 }}>
               <div>
                 <div style={{ fontSize:10, color:C.orange, letterSpacing:3, textTransform:"uppercase", marginBottom:4 }}>Aktuálny cieľ</div>
                 <div style={{ fontSize:28, fontWeight:900 }}>5 km pod <span style={{ color:C.orange }}>{fmt(target5k)}</span></div>
@@ -336,7 +333,7 @@ Ak nejaký údaj chýba, daj null. Iba JSON, žiadny text navyše.` }
             </div>
 
             {/* KPI row */}
-            <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(120px,1fr))", gap:10, marginBottom:20 }}>
+            <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(100px,1fr))", gap:8, marginBottom:14 }}>
               <KPI label="Celkové aktivity" value="87+" sub="Mar–Jún 2026" color={C.orange} />
               <KPI label="Km beh" value="215 km" sub="42 aktivít" color={C.green} />
               <KPI label="Km bicykel" value="167 km" sub="38 aktivít" color={C.blue} />
@@ -441,8 +438,8 @@ Ak nejaký údaj chýba, daj null. Iba JSON, žiadny text navyše.` }
             {/* Table */}
             <Card>
               <SectionTitle icon="📋" title="Tabuľka všetkých behov" />
-              <div style={{ overflowX:"auto" }}>
-                <table style={{ width:"100%", borderCollapse:"collapse", fontSize:11 }}>
+              <div style={{ overflowX:"auto", WebkitOverflowScrolling:"touch" }}>
+                <table style={{ width:"100%", borderCollapse:"collapse", fontSize:11, minWidth:400 }}>
                   <thead>
                     <tr style={{ background:C.card2, color:C.muted, fontSize:10, textTransform:"uppercase" }}>
                       {["Dátum","Vzdialenosť","Čas","Tempo /km","5K prepočet","vs. Najlepší"].map(h => (
@@ -527,8 +524,8 @@ Ak nejaký údaj chýba, daj null. Iba JSON, žiadny text navyše.` }
             {/* Full plan table */}
             <Card>
               <SectionTitle icon="🗓" title="Kompletný plán — všetky týždne" />
-              <div style={{ overflowX:"auto" }}>
-                <table style={{ width:"100%", borderCollapse:"collapse", fontSize:11 }}>
+              <div style={{ overflowX:"auto", WebkitOverflowScrolling:"touch" }}>
+                <table style={{ width:"100%", borderCollapse:"collapse", fontSize:11, minWidth:400 }}>
                   <thead>
                     <tr style={{ background:C.card2, color:C.muted, fontSize:10, textTransform:"uppercase" }}>
                       {["T#","Fáza","Uto (kľúčový)","Str (sila)","Sob (dlhý)","Fokus"].map(h => (
@@ -824,7 +821,7 @@ Ak nejaký údaj chýba, daj null. Iba JSON, žiadny text navyše.` }
               </Card>
             ) : (
               <>
-                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:16, marginBottom:16 }}>
+                <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))", gap:12, marginBottom:12 }}>
                   <Card>
                     <SectionTitle icon="❤️" title="HRV trend (ms)" />
                     <ResponsiveContainer width="100%" height={180}>
@@ -943,9 +940,15 @@ Ak nejaký údaj chýba, daj null. Iba JSON, žiadny text navyše.` }
       <style>{`
         @keyframes spin { from { transform:rotate(0deg); } to { transform:rotate(360deg); } }
         * { box-sizing:border-box; }
-        ::-webkit-scrollbar { width:6px; height:6px; }
+        ::-webkit-scrollbar { width:4px; height:4px; }
         ::-webkit-scrollbar-track { background:${C.dark}; }
         ::-webkit-scrollbar-thumb { background:${C.border}; border-radius:3px; }
+        @media (max-width: 600px) {
+          table { font-size: 10px !important; }
+          td, th { padding: 5px 6px !important; }
+        }
+        div::-webkit-scrollbar { display: none; }
+        body { overflow-x: hidden; }
       `}</style>
     </div>
   );
