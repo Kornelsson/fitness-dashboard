@@ -72,6 +72,82 @@ const BASE_PLAN = [
   { w:8, phase:"Test",    col:C.purple, tue:`4 km easy Z1`,            wed:`Voľno`,       sat:`🏁 5 km TEST PR!`, focus:"Tapering → PR" },
 ];
 
+// ── WEEKLY TIPS ──────────────────────────────────────────────
+const WEEKLY_TIPS = {
+  1: {
+    weekTip: "T1 Základ: Beháj v Z2 (SF pod 130 bpm). Ak ťa tlačí temno, spomaľ — to je správne.",
+    nutritionTip: "Zjedz 135g proteínu denne. Raňajky: 3 vajcia + tvaroh. Po behu: srvátkový proteín do 30 min.",
+    recoveryTip: "Spánok 7–8h je kľúčový. Svaly rastú v noci, nie počas tréningu. Choď spať pred 23:00.",
+    nextRunGoal: "5 km v Z2, SF pod 130 bpm, tempo ~9:30–10:00/km. Neponáhľaj sa!",
+    strengthFocus: "Streda: Drepy 3×15, hip thrust 3×15, plank 3×30s, výpady 3×10. Technika > váha.",
+    warningSign: "Ak SF stúpa pri rovnakom tempe — zober deň voľna. Pretrénovanosť v 42r. hrozí.",
+    motivation: "Prvý týždeň je o návyku, nie o výkone. Každý km ťa posúva k 27:15.",
+  },
+  2: {
+    weekTip: "T2 Základ: Pridaj 4×100m strides po behu — krátke zrýchlenia 80% tempa. Prebúdzajú rýchle vlákna.",
+    nutritionTip: "Hydratácia: 500ml vody pred behom, 2,5l denne celkom. Telesná voda 53,6% je nízka — priorita!",
+    recoveryTip: "Po dlhom sobotňajšom behu: 10 min strečing lýtok, stehien a hamstringov. Prevenecia zranení.",
+    nextRunGoal: "5 km Z2 + 4×100m strides na konci. Strides: rýchlejší beh ~20 sek, potom chôdza 60 sek.",
+    strengthFocus: "Streda: Bulharský drep 3×10/nohu, KB swing 3×15, plank bočný 3×25s, step-up 3×12.",
+    warningSign: "Kolená alebo achillovka? Zastav a nahlás. Lepšie 1 deň pauza ako 3 týždne zranenie.",
+    motivation: "Konzistencia poráža intenzitu. 87 aktivít za 3 mesiace — si v top 10% bežcov!",
+  },
+  3: {
+    weekTip: "T3 Rozvoj: Prvé intervaly! 4×800m v Z3 (SF 155–169). Toto posúva laktátový prah — kľúč pre 5K.",
+    nutritionTip: "V deň intervalov zjedz sacharidy pred behom: banán alebo ovsené vločky 60–90 min pred.",
+    recoveryTip: "Po intervaloch: aktívna regenerácia — 10 min ľahká chôdza, potom strečing. Nie statický oddych.",
+    nextRunGoal: "4×800m v Z3 tempe (8:07–9:02/km). Medzi sériami: 90 sek pomalej chôdze.",
+    strengthFocus: "Streda: KB goblet drep 3×12, KB swing 3×20, výpad s KB 3×12, glute bridge 3×12.",
+    warningSign: "Pri intervaloch: ak nedokážeš dokončiť sériu v tempe — zníž rýchlosť, nie počet sérií.",
+    motivation: "VO2max 47 je výborný štart. Intervaly ho posunú na 50+ — to je viditeľné zlepšenie tempa.",
+  },
+  4: {
+    weekTip: "T4 Deload: Zníž objem o 30%. Telo sa teraz adaptuje — práve tento týždeň sa zlepšuješ!",
+    nutritionTip: "Deload týždeň: zjedz o 200 kcal menej ako zvyčajne. Proteín zachovaj na 135g.",
+    recoveryTip: "Ideálny týždeň na masáž alebo foam rolling. HRV by mal stúpnuť — sleduj ho ráno.",
+    nextRunGoal: "4 km veľmi ľahký beh Z1, SF pod 120 bpm. Ak SF stúpa, prejdi na chôdzu.",
+    strengthFocus: "Streda: Ľahší silový — len vlastná váha. Drepy 2×15, planky 2×30s, výpady 2×10.",
+    warningSign: "Nepridávaj objem! Deload je súčasť plánu, nie slabosť. Telo to potrebuje.",
+    motivation: "Po deloade príde tvoj najsilnejší týždeň. Vydržš — T5 bude výnimočný!",
+  },
+  5: {
+    weekTip: "T5 Tempo: Tempo run je kráľ 5K tréningu. 3 km v Z3 (8:07–9:02/km) — diskomfort je správny.",
+    nutritionTip: "Pred tempo runom: sacharidy + proteín 2h pred. Po: 22g proteínu + 40g sacharidov do 30 min.",
+    recoveryTip: "Spánok pred tempo dňom je dôležitejší ako po. Choď spať skôr v utorok večer.",
+    nextRunGoal: "2km rozbeh Z2, 3km tempo Z3 (8:07–9:02/km), 2km výklus Z1. Celkom 7km.",
+    strengthFocus: "Streda: KB goblet drep 4×12, KB swing 4×20, výpad chôdza 3×12, calf raise 3×20.",
+    warningSign: "Tempo run by mal byť nepríjemný ale zvládnuteľný. Ak nemôžeš hovoriť — spomaľ.",
+    motivation: "Halfway point! 4 týždne za tebou, 4 pred tebou. Tempo sa zlepší o 10–15 sek/km.",
+  },
+  6: {
+    weekTip: "T6 Tempo: Intervaly Z4 — 6×1 min maximálne úsilie, 2 min oddych. Krátke ale účinné.",
+    nutritionTip: "V deň Z4 intervalov: extra 30g sacharidov pred behom. Glykogén je palivo pre Z4.",
+    recoveryTip: "Po Z4 intervaloch: minimálne 48h pred ďalším ťažkým tréningom. Štvrtok = ľahký Z2.",
+    nextRunGoal: "6×1 min v Z4 (SF 170–184). 2 min pomalá chôdza medzi sériami. Celkom ~40 min.",
+    strengthFocus: "Streda: Všetko ťažšie o 10% ako T5. KB swing 4×20 ťažší KB, nordic curl 3×6.",
+    warningSign: "HRV pod 30ms = zober deň voľna namiesto intervalov. Telo hovorí jasne.",
+    motivation: "Z4 intervaly sú najťažší tréning v pláne. Po nich príde výkon ktorý ťa prekvapí.",
+  },
+  7: {
+    weekTip: "T7 Vrchol: Posledný ťažký týždeň. Daj do toho všetko — za týždeň je test.",
+    nutritionTip: "Tento týždeň: max proteín (150g/deň) a sacharidy. Telo potrebuje palivo pre vrchol.",
+    recoveryTip: "Spánok 8h každú noc tento týždeň. Žiadny alkohol. Telo sa pripravuje na PR.",
+    nextRunGoal: "4km Z3 tempo + 4×200m šprinty. Šprinty: 30 sek max, 90 sek oddych.",
+    strengthFocus: "Streda: Ťažší KB, pistol drep asistovaný 3×5, nordic curl 3×6, plank 3×35s.",
+    warningSign: "Ak sa cítiš unavený — to je normálne. Ak cítiš bolesť — zastav okamžite.",
+    motivation: "Toto je posledný ťažký týždeň. Za 8 dní ukážeš čo si natrénoval. Dôveruj procesu!",
+  },
+  8: {
+    weekTip: "T8 Test: Tapering — zníž objem na minimum. Energia sa hromadí pre testovací beh v sobotu.",
+    nutritionTip: "Pred testom: večer pred — cestoviny alebo ryža. Ráno — banán + káva 90 min pred štartom.",
+    recoveryTip: "Spí max v T8. Žiadne nové tréningy. Krátke prechádzky udržia nohy svieže.",
+    nextRunGoal: "Utorok: 4km veľmi ľahký Z1. Štvrtok: 2km easy. Sobota: 5km TEST — cieľ pod 27:15!",
+    strengthFocus: "Streda: Voľno! Žiadny silový tréning pred testom. Max strečing a foam rolling.",
+    warningSign: "Nepridávaj tréning! Tapering je vedecky overený. Menej = viac v testovací deň.",
+    motivation: "8 týždňov práce vyústí do soboty. Dôveruj tréningovému procesu. Si pripravený na PR!",
+  },
+};
+
 // ── SUB-COMPONENTS ─────────────────────────────────────────────
 const Card = ({ children, style={} }) => (
   <div style={{ background:C.card, borderRadius:12, padding:16, border:`1px solid ${C.border}`, ...style }}>
@@ -125,7 +201,6 @@ export default function Dashboard() {
   });
   const [zeppLoading, setZeppLoading] = useState(false);
   const [aiTips, setAiTips]     = useState(null);
-  const [aiPlan, setAiPlan]     = useState(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [currentWeek, setCurrentWeek] = useState(1);
   const fileRef = useRef();
@@ -145,51 +220,10 @@ export default function Dashboard() {
   }, []);
 
   // ── AI TIPS ──────────────────────────────────────────────────
-  const generateAiInsights = useCallback(async (bodyData=null) => {
+  const generateAiInsights = useCallback(() => {
     setAiLoading(true);
-    try {
-      const bodyCtx = bodyData
-        ? `Telesné zloženie z Zepp Life (15.6.2026): hmotnosť ${bodyData.weight} kg, tukové tkanivo ${bodyData.fat}% (trochu vysoké pre bežca, cieľ <18%), svalová hmota ${bodyData.muscle} kg (dobrá), telesná voda ${bodyData.water}% (NÍZKA – nedostatočná, cieľ 55-65%), BMI ${bodyData.bmi} (v norme), viscerálny tuk ${bodyData.visceral} (ZVÝŠENÝ, cieľ <10), kostná hmota ${bodyData.bone} kg (nízka), proteín ${bodyData.protein}% (výborný), bazálny metabolizmus ${bodyData.bmr} kcal, Body Score ${bodyData.bodyScore}/100.`
-        : `Hmotnosť 75 kg (bez detailných údajov z Zepp Life).`;
-
-      const prompt = `Si osobný tréner a výživový poradca pre bežca.
-
-Athlete profil:
-- Vek: 42 rokov, hmotnosť 75 kg
-- ${bodyCtx}
-- Najlepší 5K čas: ${fmt(best5k)} (tempo ${fmtPace(best5k/5)})
-- Priemerný 5K čas: ${fmt(avg5k)}
-- Cieľ: 5K pod ${fmt(target5k)} (+10% zlepšenie)
-- Aktuálny tréningový týždeň: ${currentWeek}/8
-- Posledné aktivity: 4× beh za posledných 7 dní, SF 128–135 bpm (Z2)
-- 95% behov rovnakým tempom, nulový silový tréning doteraz
-- Proteín: cieľ ${PROTEIN_DAILY}g/deň, ${PROTEIN_POST}g po tréningu
-
-Vygeneruj JSON objekt s týmito kľúčmi:
-{
-  "weekTip": "Tip na tento tréningový týždeň (max 120 znakov)",
-  "nutritionTip": "Tip na výživu pre tento týždeň (max 120 znakov)",
-  "recoveryTip": "Tip na zotavenie (max 120 znakov)",
-  "nextRunGoal": "Konkrétny cieľ pre najbližší beh (max 80 znakov)",
-  "strengthFocus": "Fokus silového tréningu túto stredu (max 100 znakov)",
-  "warningSign": "Čo sledovať / čoho sa vyvarovať (max 100 znakov)",
-  "motivation": "Motivačná veta personalizovaná pre Kornela (max 100 znakov)"
-}
-
-Odpovedaj LEN čistým JSON, bez markdown, bez preamble.`;
-
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method:"POST",
-        headers:{ "Content-Type":"application/json" },
-        body: JSON.stringify({ model:"claude-sonnet-4-6", max_tokens:1000, messages:[{ role:"user", content:prompt }] })
-      });
-      const data = await res.json();
-      const raw = data.content?.find(b=>b.type==="text")?.text || "{}";
-      const clean = raw.replace(/```json|```/g,"").trim();
-      setAiTips(JSON.parse(clean));
-    } catch(e) {
-      setAiTips({ weekTip:"Pokračuj v pláne, dôvera v proces je základ úspechu.", nutritionTip:`Dnes zjedz ${PROTEIN_DAILY}g proteínu a pi aspoň 2,5 l vody.`, recoveryTip:"Spánok 7–8h je najlepší doplnok stravy.", nextRunGoal:`Beh 5 km, SF pod 130 bpm, cieľ tempo ${fmtPace(avg5k/5)}`, strengthFocus:"Drepy 3×15, hip thrust 3×15, plank 3×30s, výpady 3×10", warningSign:"Ak SF stúpa pri rovnakom tempe – zober deň voľna.", motivation:"Každý beh ťa posúva bližšie k 27:15. Nezastávaj." });
-    }
+    const tips = WEEKLY_TIPS[currentWeek] || WEEKLY_TIPS[1];
+    setAiTips(tips);
     setAiLoading(false);
   }, [currentWeek]);
 
