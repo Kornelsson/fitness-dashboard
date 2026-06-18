@@ -214,9 +214,15 @@ export default function Dashboard() {
   // ── SYNC STRAVA ──────────────────────────────────────────────
   const syncStrava = useCallback(async () => {
     setLoading(true);
-    await new Promise(r => setTimeout(r, 1800));
-    setLastSync(new Date().toLocaleString("sk-SK", { day:"numeric", month:"numeric", year:"numeric", hour:"2-digit", minute:"2-digit" }));
+    setStravaLoading(true);
+    try {
+      const res = await fetch("https://kornel-fitness.vercel.app/api/strava");
+      const data = await res.json();
+      if (Array.isArray(data)) setStravaActivities(data);
+      setLastSync(new Date().toLocaleString("sk-SK", { day:"numeric", month:"numeric", year:"numeric", hour:"2-digit", minute:"2-digit" }));
+    } catch(e) { console.error(e); }
     setLoading(false);
+    setStravaLoading(false);
   }, []);
 
   // ── AI TIPS ──────────────────────────────────────────────────
@@ -268,6 +274,8 @@ Ak nejaký údaj chýba, daj null. Iba JSON, žiadny text navyše.` }
   const [healthLoading, setHealthLoading] = useState(true);
 
   const [historyData, setHistoryData] = useState([]);
+  const [stravaActivities, setStravaActivities] = useState([]);
+  const [stravaLoading, setStravaLoading] = useState(false);
 
   const fetchHealthData = useCallback(async () => {
     setHealthLoading(true);
@@ -290,6 +298,7 @@ Ak nejaký údaj chýba, daj null. Iba JSON, žiadny text navyše.` }
   useEffect(() => {
     fetchHealthData();
     generateAiInsights();
+    syncStrava();
   }, []);
 
   const tabs = [
@@ -415,26 +424,42 @@ Ak nejaký údaj chýba, daj null. Iba JSON, žiadny text navyše.` }
 
             {/* Recent activities */}
             <Card>
-              <SectionTitle icon="⚡" title="Posledné aktivity" />
-              <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
-                {RECENT_ACTIVITIES.map((a,i) => (
-                  <div key={i} style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"8px 12px", background:C.card2, borderRadius:8, borderLeft:`3px solid ${activityColor(a.type)}` }}>
-                    <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-                      <span style={{ fontSize:16 }}>{activityIcon(a.type)}</span>
-                      <div>
-                        <div style={{ fontWeight:600, fontSize:12 }}>{a.name}</div>
-                        <div style={{ color:C.muted, fontSize:10 }}>{a.date}</div>
+              <SectionTitle icon="⚡" title="Posledné aktivity — živé zo Stravy" />
+              {stravaLoading ? (
+                <div style={{ textAlign:"center", padding:20, color:C.muted }}>⏳ Načítavam zo Stravy...</div>
+              ) : (
+                <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
+                  {(stravaActivities.length > 0 ? stravaActivities : RECENT_ACTIVITIES.map(a => ({
+                    name: a.name, type: a.type, distance: a.dist*1000,
+                    moving_time: 0, kilojoules: 0, average_heartrate: a.hr,
+                    start_date_local: a.date, sport_type: a.type
+                  }))).slice(0,8).map((a,i) => {
+                    const type = a.sport_type || a.type;
+                    const dist = a.distance ? (a.distance/1000).toFixed(2) : "—";
+                    const mins = a.moving_time ? Math.floor(a.moving_time/60) : 0;
+                    const secs = a.moving_time ? String(a.moving_time%60).padStart(2,'0') : '00';
+                    const date = a.start_date_local ? a.start_date_local.slice(0,10) : "";
+                    const kcal = a.kilojoules ? Math.round(a.kilojoules*0.239) : null;
+                    return (
+                      <div key={i} style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"8px 12px", background:C.card2, borderRadius:8, borderLeft:`3px solid ${activityColor(type)}` }}>
+                        <div style={{ display:"flex", alignItems:"center", gap:10, minWidth:0 }}>
+                          <span style={{ fontSize:16, flexShrink:0 }}>{activityIcon(type)}</span>
+                          <div style={{ minWidth:0 }}>
+                            <div style={{ fontWeight:600, fontSize:12, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{a.name}</div>
+                            <div style={{ color:C.muted, fontSize:10 }}>{date}</div>
+                          </div>
+                        </div>
+                        <div style={{ display:"flex", gap:10, alignItems:"center", flexShrink:0 }}>
+                          <span style={{ color:C.light, fontSize:12 }}>{dist} km</span>
+                          <span style={{ color:C.muted, fontSize:11 }}>{mins}:{secs}</span>
+                          {kcal && <span style={{ color:C.yellow, fontSize:11 }}>{kcal} kcal</span>}
+                          {a.average_heartrate && <Tag label={`♥ ${Math.round(a.average_heartrate)}`} color={C.red} />}
+                        </div>
                       </div>
-                    </div>
-                    <div style={{ display:"flex", gap:12, alignItems:"center" }}>
-                      <span style={{ color:C.light, fontSize:12 }}>{a.dist} km</span>
-                      <span style={{ color:C.muted, fontSize:11 }}>{a.time}</span>
-                      <span style={{ color:C.yellow, fontSize:11 }}>{a.kcal} kcal</span>
-                      {a.hr && <Tag label={`♥ ${a.hr}`} color={C.red} />}
-                    </div>
-                  </div>
-                ))}
-              </div>
+                    );
+                  })}
+                </div>
+              )}
             </Card>
           </>
         )}
@@ -444,16 +469,25 @@ Ak nejaký údaj chýba, daj null. Iba JSON, žiadny text navyše.` }
         ══════════════════════════════════════ */}
         {tab === "runs" && (
           <>
+            {(() => {
+              const liveRuns = stravaActivities.filter(a => a.sport_type === "Run" && a.distance >= 4500 && a.distance <= 6000);
+              const liveTimes = liveRuns.map(a => ({ date: a.start_date_local?.slice(5,10), t5k: (a.moving_time/(a.distance/1000))*5 }));
+              const liveBest = liveTimes.length > 0 ? Math.min(...liveTimes.map(r=>r.t5k)) : best5k;
+              const liveAvg = liveTimes.length > 0 ? liveTimes.reduce((s,r)=>s+r.t5k,0)/liveTimes.length : avg5k;
+              const liveTarget = liveBest * 0.9;
+              return (
             <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(140px,1fr))", gap:10, marginBottom:20 }}>
-              <KPI label="Najlepší 5K" value={fmt(best5k)} sub="24. máj 2026" color={C.green} />
-              <KPI label="Priemerný 5K" value={fmt(avg5k)} sub={`z ${run5k.length} behov`} color={C.orange} />
-              <KPI label="Cieľ 5K" value={fmt(target5k)} sub="+10% zlepšenie" color={C.blue} />
-              <KPI label="Najlepšie tempo" value={fmtPace(best5k/5)} sub="min/km" color={C.green} />
-              <KPI label="Cieľové tempo" value={fmtPace(target5k/5)} sub="min/km" color={C.blue} />
+              <KPI label="Najlepší 5K" value={fmt(liveBest)} sub="živé zo Stravy" color={C.green} />
+              <KPI label="Priemerný 5K" value={fmt(liveAvg)} sub={`z ${liveTimes.length || run5k.length} behov`} color={C.orange} />
+              <KPI label="Cieľ 5K" value={fmt(liveTarget)} sub="+10% zlepšenie" color={C.blue} />
+              <KPI label="Najlepšie tempo" value={fmtPace(liveBest/5)} sub="min/km" color={C.green} />
+              <KPI label="Cieľové tempo" value={fmtPace(liveTarget/5)} sub="min/km" color={C.blue} />
             </div>
+              );
+            })()}
 
             <Card style={{ marginBottom:16 }}>
-              <SectionTitle icon="⏱" title="5 km čas — každý beh" />
+              <SectionTitle icon="⏱" title="5 km čas — každý beh (živé dáta)" />
               <ResponsiveContainer width="100%" height={200}>
                 <LineChart data={paceChartData}>
                   <CartesianGrid strokeDasharray="3 3" stroke={C.border} />
